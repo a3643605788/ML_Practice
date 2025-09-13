@@ -2,6 +2,13 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression #線性回歸模型
+from sklearn.metrics import mean_squared_error, r2_score #評估模型結果好壞
+import numpy as np;
+from sklearn.dummy import DummyRegressor
+from sklearn.ensemble import RandomForestRegressor
+
+
 
 df = pd.read_csv("dataset/housePricePredition.csv")
 
@@ -18,19 +25,36 @@ y = df["price"] #要預測的值(標籤)(應變數)
 scaler =StandardScaler()
 X_scaled = scaler.fit_transform(X) #把dataset的各特徵做特徵處理(用標準化的方式處理)
 
-from sklearn.linear_model import LinearRegression #線性回歸模型
-from sklearn.metrics import mean_squared_error, r2_score #評估模型結果好壞
-
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42) #用特徵處理過的dataset，分割出訓練用和測試用
+
+# 線性回歸模型訓練
 model = LinearRegression()
 model.fit(X_train, y_train) #用x訓練集資料和y訓練集資料，丟給線性回歸模型做訓練
-
 y_pred = model.predict(X_test) #訓練完後拿x測試集資料產出預測結果
 
-RMSE = mean_squared_error(y_test, y_pred)
+# Baseline: 只猜平均值
+# dummy = DummyRegressor(strategy="mean")
+# dummy.fit(X_train, y_train)
+# y_dummy = dummy.predict(X_test)
 
+# 隨機叢林模型訓練
+rf = RandomForestRegressor(n_estimators=200, random_state=42)
+rf.fit(X_train, y_train)
+y_rf = rf.predict(X_test)
+
+# RMSE_Dummy = np.sqrt(mean_squared_error(y_test, y_dummy))
+RMSE = np.sqrt(mean_squared_error(y_test, y_pred))
+RMSE_RF = np.sqrt(mean_squared_error(y_test, y_rf))
+
+
+# print("y's head: ", y.head())
+# print("y's type: ", type(y.iloc[0]))
+
+# print("Dummy's RMSE: ", RMSE_Dummy)
+# print("Dummy's R^2 score: ", r2_score(y_test, y_dummy))
 print("RMSE: ", RMSE)
 print("R^2 score: ", r2_score(y_test, y_pred))
-
+print("RF's RMSE", RMSE_RF)
+print("RF's R^2 score: ", r2_score(y_test, y_rf))
 print("price's mean: ", y.mean()) #平均房價
 print("相對誤差: ", RMSE/y.mean())
