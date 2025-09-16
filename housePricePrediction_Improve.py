@@ -17,6 +17,25 @@ feature = ['bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot', 'floors',
             'waterfront', 'view', 'condition', 'sqft_above', 'sqft_basement',
             'yr_built', 'yr_renovated']
 
+# 資料品質檢查
+# print("shape:", df.shape)
+# print("\nDTypes:\n", df.dtypes)
+# print("\nHead:\n", df.head(3))
+# print("\nDescribe (數值):\n", df[feature + ["price"]].describe(percentiles=[.01,.05,.5,.95,.99]))
+
+# 修正異常值
+# 刪除price偏離平均值超過3倍標準差的資料
+from scipy import stats
+# stats.zscore(df["price"])):計算每個數值高出或低了平均值有幾個標準差
+# abs:絕對值
+df = df[(abs(stats.zscore(df["price"]))) < 3]
+
+# 缺失值補齊
+# 刪除缺失值
+print(df.isnull().sum()) #每個欄位缺失的比數
+df = df.dropna(subset=["price"])
+
+
 # 特徵與標籤
 X = df[feature] #輸入的資料(特徵)(自變數)
 y = df["price"] #要預測的值(標籤)(應變數)
@@ -52,9 +71,10 @@ RMSE_RF = np.sqrt(mean_squared_error(y_test, y_rf))
 
 # print("Dummy's RMSE: ", RMSE_Dummy)
 # print("Dummy's R^2 score: ", r2_score(y_test, y_dummy))
-print("RMSE: ", RMSE)
-print("R^2 score: ", r2_score(y_test, y_pred))
-print("RF's RMSE", RMSE_RF)
-print("RF's R^2 score: ", r2_score(y_test, y_rf))
-print("price's mean: ", y.mean()) #平均房價
-print("相對誤差: ", RMSE/y.mean())
+
+# print("RMSE: ", RMSE)
+# print("R^2 score: ", r2_score(y_test, y_pred))
+# print("RF's RMSE", RMSE_RF)
+# print("RF's R^2 score: ", r2_score(y_test, y_rf))
+# print("price's mean: ", y.mean()) #平均房價
+# print("相對誤差: ", RMSE/y.mean())
