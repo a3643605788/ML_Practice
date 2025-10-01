@@ -12,10 +12,35 @@ from sklearn.ensemble import RandomForestRegressor
 
 df = pd.read_csv("dataset/housePricePredition.csv")
 
+# 2025/09/18 先加上來而已，要理解特徵具體怎麼建立出來的
+
+import datetime
+current_year = datetime.datetime.now().year
+df["house_age"] = current_year - df["yr_built"] #建立「屋齡」
+df["renovated"] = (df["yr_renovated"] > 0).astype(int) #是否翻修過
+df["living_ratio"] = df["sqft_living"] / (df["sqft_lot"] + 1)  #居住面積比例(避免除以0)
+df["basement_ratio"] = df["sqft_basement"] / (df["sqft_living"] + 1) #地下室佔比
+df["is_multi_floor"] = (df["floors"] > 2).astype(int) #總樓層是否大於 2
+df["sqft_lot_log"] = np.log1p(df["sqft_lot"]) #高度偏態變數做對數轉換
+
+feature = [
+    'bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot', 'floors',
+    'waterfront', 'view', 'condition', 'sqft_above', 'sqft_basement',
+    'yr_built', 'yr_renovated',
+    'house_age', 'renovated', 'living_ratio', 'basement_ratio',
+    'is_multi_floor', 'sqft_lot_log'
+]
+
+# 2025/09/18 先加上來而已，要理解特徵具體怎麼建立出來的
+
+
+
+
+
 # 要輸入的特徵(加入我們認為會影響房價的特徵)
-feature = ['bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot', 'floors',
-            'waterfront', 'view', 'condition', 'sqft_above', 'sqft_basement',
-            'yr_built', 'yr_renovated']
+# feature = ['bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot', 'floors',
+#             'waterfront', 'view', 'condition', 'sqft_above', 'sqft_basement',
+#             'yr_built', 'yr_renovated']
 
 # 資料品質檢查
 # print("shape:", df.shape)
@@ -68,6 +93,29 @@ y_rf_log = rf.predict(X_test)
 # y_rf = rf.predict(X_test)
 y_rf = np.expm1(y_rf_log)
 
+# 隨機叢林模型訓練-GridSearchCV(參數搜尋方法)
+# 2025/09/24 先加上來而已，要理解怎麼建立出來的
+from sklearn.model_selection import GridSearchCV
+
+param_grid = {
+    'n_estimators': [200, 500, 1000],
+    'max_depth': [None, 10, 20, 30],
+    'max_features': [None, 'sqrt', 'log2'],  # 改掉 'auto'
+    'min_samples_split': [2, 5, 10]
+}
+
+grid_search = GridSearchCV(
+    RandomForestRegressor(random_state=42),
+    param_grid,
+    cv=3,  # 三折交叉驗證
+    scoring='neg_mean_squared_error',
+    n_jobs=-1
+)
+
+grid_search.fit(X_train, y_train)
+
+# 2025/09/24 先加上來而已，要理解怎麼建立出來的
+
 # RMSE_Dummy = np.sqrt(mean_squared_error(y_test, y_dummy))
 # RMSE = np.sqrt(mean_squared_error(y_test, y_pred))
 # RMSE_RF = np.sqrt(mean_squared_error(y_test, y_rf))
@@ -88,5 +136,7 @@ print("RMSE: ", RMSE)
 print("R^2 score: ", r2_score(y_test_expm1, y_pred))
 print("RF's RMSE", RMSE_RF)
 print("RF's R^2 score: ", r2_score(y_test_expm1, y_rf))
+print("最佳參數:", grid_search.best_params_)
+print("最佳RMSE:", np.sqrt(-grid_search.best_score_))
 print("price's mean: ", y.mean()) #平均房價
 print("相對誤差: ", RMSE/y.mean())
