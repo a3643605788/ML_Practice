@@ -150,6 +150,23 @@ print("price mean:", y.mean())
 
 
 
+# =====================
+# 匯出模型
+# =====================
+from joblib import dump
+import os
+
+# 確保 model 資料夾存在
+os.makedirs("model", exist_ok=True)
+
+model_path = "model/house_price_model.joblib"
+dump(best_rf, model_path)
+
+print(f"✓ 模型匯出完成：{model_path}")
+
+
+
+
 # -----隨機森林調整參數簡介-----
 # n_estimators	    森林中樹的數量      randint(200, 500)	
 # 隨機從 200～499 間選一個整數。
