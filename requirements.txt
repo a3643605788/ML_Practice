@@ -1,0 +1,25 @@
+# requirements.txt 要包含：
+# -API 執行所需的套件
+# -.joblib 能正常載入所需的套件（主要是 scikit-learn、numpy）
+fastapi
+pydantic
+pandas
+numpy
+joblib
+uvicorn[standard]
+scikit-learn
+
+
+
+# ✔ 執行 FastAPI 必備：
+# fastapi
+# uvicorn（FastAPI 官方推薦的伺服器，沒有它無法啟動FastAPI）
+# pydantic
+
+# ✔ Input 需要轉成 DataFrame：
+# pandas
+# numpy
+
+# ✔ joblib.load 模型要用：
+# joblib
+# scikit-learn（模型類別本身的定義）
