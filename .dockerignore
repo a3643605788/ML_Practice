@@ -1,0 +1,14 @@
+# 虛擬環境
+venv/
+.env/
+# Python 編譯檔
+__pycache__/
+*.pyc
+# Git
+.git/
+.gitignore
+# 編輯器設定
+.vscode/
+.idea/
+# ⼤型資料（如果不需要帶進 image）
+dataset/
