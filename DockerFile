@@ -12,3 +12,6 @@ EXPOSE 8000
 # 6. 啟動指令：跑 FastAPI
 #    housePrice_api.py 裡⾯有 app = FastAPI()
 CMD ["uvicorn", "housePrice_api:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# 建立docker image語法:docker build -t houseprice_api:latest .
+# 用image建立並執行container:docker run -d -p 8000:8000 --name houseprice_api houseprice_api:latest
