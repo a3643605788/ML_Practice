@@ -46,22 +46,6 @@ An automated classification system to predict passenger survival using structure
 
 ---
 
-## Quick Start
-
-### 1. Setup Environment
-
-# Clone the repository
-```
-git clone [https://github.com/a3643605788/ML_Practice.git](https://github.com/a3643605788/ML_Practice.git)
-cd ML_Practice
-pip install -r requirements.txt
-```
-
-### 2. Run Training Pipeline
-```
-python src/train.py
-```
-
 ## Engineering Mindset
 I believe ML models are only as good as the systems they run on. My approach includes:
 
